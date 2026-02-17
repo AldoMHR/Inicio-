@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi perfil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="todo">
+    <div class="hilera">
+        <div class="card">
+            <div>
+                <img class="img" src="assets/pfp.png" alt="Foto de perfil">
+                <p class="titulo">Mi perfil</p>
+            </div>
+        </div>
+        <div style="margin: 50px;">
+            <h2 class="text">Ingrese su nombre de usuario</h2>
+            <input type="text" id="nombreUsuario" placeholder="Ej. Erika Parga" min="1">
+            <button id="searchUsuario">Buscar Usuario</button>
+            <form id="updateInfoForm">
+                <input type="text" id="userName" placeholder="Nombre de Usuario" required>
+                <input type="text" id="userPassword" placeholder="Contraseña" required>
+                <input type="text" id="userEmail" placeholder="Email">
+                <input type="text" id="userPhone" placeholder="Telefono" required>
+                <button type="submit">Actualizar Datos</button>
+                <div id="newPostResult"></div>
+            </form>
+        </div>
+        
+    </div>
+    
+    <script type="module" src="app.js"></script>
+</body>
+</html>
