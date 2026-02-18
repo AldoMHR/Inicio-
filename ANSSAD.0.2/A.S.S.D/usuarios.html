@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Usuarios - A.S.S.D</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f6f6f4; }
+        /* Estilos del menú lateral para que se vea igual al index */
+        .drawer { position: fixed; top: 0; left: -100%; width: 300px; height: 100%; background: white; z-index: 300; transition: 0.3s; }
+        .drawer.open { left: 0; }
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 290; display: none; }
+        .drawer-overlay.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <header class="bg-white p-4 shadow-md flex items-center">
+        <i class="fas fa-bars text-xl cursor-pointer" onclick="toggleMenu()"></i>
+        <h1 class="flex-1 text-center font-bold text-xl text-cyan-600">Administrar Usuarios</h1>
+    </header>
+
+    <div id="menuOverlay" class="drawer-overlay" onclick="toggleMenu()"></div>
+    <div id="sideMenu" class="drawer p-6">
+        <h2 class="text-2xl font-bold mb-8">Menú</h2>
+        <nav class="space-y-4">
+            <div class="flex items-center gap-3 p-2 cursor-pointer" onclick="location.href='index.html#noticias'">
+                <i class="fas fa-home"></i> Inicio
+            </div>
+            <div class="flex items-center gap-3 p-2 font-bold text-cyan-600">
+                <i class="fas fa-users-cog"></i> Administrar Usuarios
+            </div>
+        </nav>
+    </div>
+
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-sm mt-10">
+        <table class="w-full border-collapse">
+            <thead class="bg-gray-50 border-b">
+                <tr>
+                    <th class="p-3 text-left">Nombre</th>
+                    <th class="p-3 text-left">Correo</th>
+                    <th class="p-3 text-left">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaUsuarios">
+                </tbody>
+        </table>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        function toggleMenu() {
+            document.getElementById('sideMenu').classList.toggle('open');
+            document.getElementById('menuOverlay').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
