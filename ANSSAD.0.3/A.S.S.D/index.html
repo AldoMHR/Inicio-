@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMD - Durango App Full Screen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #f6f6f4; margin: 0; }
+        
+        .page { display: none; min-height: 100vh; width: 100%; position: relative; background-color: #f6f6f4; }
+        .page.active { display: flex; flex-direction: column; }
+
+        /* --- MENÚ LATERAL --- */
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 290; display: none; }
+        .drawer-overlay.active { display: block; }
+        .drawer { 
+            position: fixed; top: 0; left: -100%; width: 300px; height: 100%; 
+            background: white; z-index: 300; transition: 0.3s; padding: 20px;
+        }
+        .drawer.open { left: 0; }
+        .menu-list-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; font-size: 14px; cursor: pointer; }
+
+        /* --- ESTILOS GENERALES --- */
+        .input-round { 
+            width: 100%; max-width: 400px; padding: 12px 20px; border-radius: 9999px; 
+            border: 1px solid #e5e7eb; background: white; outline: none; font-size: 13px; 
+        }
+        .btn-cyan-rounded { background-color: #9cd3de; color: #333; padding: 12px 0; width: 190px; border-radius: 9999px; font-weight: 600; display: block; margin: 0 auto; }
+
+        /* --- ESTILOS REPORTE --- */
+        .input-line { width: 100%; border-bottom: 1px solid #333; padding: 4px 0; outline: none; background: transparent; font-size: 14px; }
+        .label-report { font-size: 10px; color: #333; margin-top: 10px; display: block; font-weight: 600; }
+        .watermark { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); opacity: 0.08; width: 220px; pointer-events: none; z-index: 0; }
+
+        /* --- MODAL DE ÉXITO --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 400; display: none; align-items: center; justify-content: center; }
+        .modal-report { background: #f6f6f4; width: 280px; border-radius: 10px; overflow: hidden; text-align: center; }
+        .modal-header { background: #9cd3de; padding: 15px; font-weight: bold; font-size: 18px; }
+        .modal-body { padding: 20px; font-size: 11px; }
+
+        /* --- ESTILOS UBICACIÓN --- */
+        .map-search-container {
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 600px; background: white; border-radius: 9999px; padding: 10px 20px;
+            display: flex; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 20;
+        }
+        .btn-menu-map {
+            position: absolute; top: 15px; left: 15px; z-index: 20;
+            background: #6b7280; color: white; width: 35px; height: 35px;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+
+        /* --- NAVEGACIÓN INFERIOR --- */
+        .nav-footer { position: fixed; bottom: 0; width: 100%; display: flex; background: white; padding: 10px 0; border-top: 1px solid #eee; justify-content: space-around; z-index: 100; }
+        .nav-item { text-align: center; color: #9ca3af; cursor: pointer; }
+        .nav-item.active { color: #3b82f6; }
+        .nav-item i { font-size: 22px; display: block; }
+        .nav-item span { font-size: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="menuOverlay" class="drawer-overlay" onclick="toggleMenu()"></div>
+
+<div id="sideMenu" class="drawer">
+    <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <span class="font-bold text-lg text-center w-full">Menú</span>
+        <i class="fas fa-times cursor-pointer absolute right-5" onclick="toggleMenu()"></i>
+    </div>
+    
+    <div class="menu-list-item" onclick="showPage('noticias')">
+        <i class="fas fa-newspaper mr-3"></i> Noticias 
+        <i class="fas fa-chevron-right ml-auto text-gray-300 text-xs"></i>
+    </div>
+
+    <div class="menu-list-item" onclick="showPage('perfil')">
+        <i class="far fa-user mr-3"></i> Mi perfil 
+        <i class="fas fa-chevron-right ml-auto text-gray-300 text-xs"></i>
+    </div>
+
+    <div class="menu-list-item"><i class="far fa-play-circle mr-3"></i> Tutorial</div>
+    <div class="menu-list-item" onclick="showPage('login')"><i class="fas fa-sign-out-alt mr-3"></i> Cerrar sesión</div>
+    <div class="menu-list-item" onclick="showPage('contacto')"><i class="fas fa-phone-alt mr-3"></i> Contacto</div>
+    
+    <button onclick="window.location.href='usuarios.html'" class="btn-cyan-rounded mt-4">Administrar usuarios</button>
+</div>
+
+<div id="modalSuccess" class="modal-overlay">
+    <div class="modal-report">
+        <div class="modal-header">Reporte</div>
+        <div class="modal-body">
+            <p class="mb-4 text-gray-600">Su reporte a sido registrado correctamente. Gracias por completar la información.</p>
+            <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-cyan-500">
+                <i class="fas fa-check text-cyan-500 text-2xl"></i>
+            </div>
+            <p class="underline font-bold cursor-pointer" onclick="closeModal()">Siguiente</p>
+        </div>
+    </div>
+</div>
+
+<section id="login" class="page active p-10 text-center items-center justify-center">
+    <img src="logo.png" class="w-16 mx-auto mb-8">
+    <h2 class="text-3xl font-bold mb-20">Inicio de sesión</h2>
+    <div class="space-y-4 mb-2 w-full flex flex-col items-center">
+        <input type="email" id="loginEmail" placeholder="Ingrese su correo electrónico" class="input-round">
+        <input type="password" id="loginPass" placeholder="Ingrese su contraseña" class="input-round">
+    </div>
+    <p class="text-[10px] underline mb-10 cursor-pointer">¿Olvidaste la contraseña?</p>
+    <button onclick="handleLogin()" class="btn-cyan-rounded">Ingresar</button>
+    <p class="text-xs mt-12">¿Aún no tienes cuenta? <span class="underline font-bold cursor-pointer" onclick="showPage('registro')">Regístrate</span></p>
+</section>
+
+<section id="registro" class="page p-10 text-center items-center justify-center">
+    <div class="w-full max-w-md">
+        <header class="mb-8">
+            <i class="fas fa-chevron-left text-xl text-gray-400 absolute left-10 cursor-pointer" onclick="showPage('login')"></i>
+            <h2 class="text-3xl font-bold">Regístrate</h2>
+        </header>
+        <div class="space-y-4 mb-8 flex flex-col items-center">
+            <input type="text" id="regUser" placeholder="Ingrese su nombre de usuario" class="input-round">
+            <input type="email" id="regEmail" placeholder="Ingrese su correo electrónico" class="input-round">
+            <input type="tel" id="regPhone" placeholder="Ingrese su número telefónico (Opcional)" class="input-round">
+            <input type="password" id="regPass" placeholder="Ingrese su contraseña" class="input-round">
+            <input type="password" id="regPassConfirm" placeholder="Confirme su contraseña" class="input-round">
+        </div>
+        <button onclick="handleRegistro()" class="btn-cyan-rounded">Registrarme</button>
+    </div>
+</section>
+
+<section id="ubicacion" class="page">
+    <div class="btn-menu-map" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+    <h2 class="absolute top-4 left-0 w-full text-center font-bold text-xl z-10">Ubicación</h2>
+    <div class="map-search-container">
+        <i class="fas fa-map-marker-alt text-red-500 mr-3"></i>
+        <input type="text" placeholder="Buscar" class="flex-1 outline-none text-sm">
+        <i class="fas fa-microphone text-gray-400"></i>
+    </div>
+    <div class="flex-1 bg-gray-200 relative overflow-hidden">
+       <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d58302.328870283665!2d-104.63845347607418!3d24.03474803021651!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2smx!4v1771470862978!5m2!1ses-419!2smx" width="1700" height="800" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <nav class="nav-footer">
+        <div class="nav-item" onclick="showPage('noticias')"><i class="fas fa-newspaper"></i><span>Noticias</span></div>
+        <div class="nav-item" onclick="showPage('reportes_form')"><i class="fas fa-file-alt"></i><span>Reportes</span></div>
+        <div class="nav-item active"><i class="fas fa-map-marker-alt"></i><span>Ubicación</span></div>
+    </nav>
+</section>
+
+<section id="perfil" class="page p-8 items-center">
+    <div class="w-full max-w-2xl">
+        <header class="flex items-center mb-10">
+            <div class="bg-gray-600 p-2 rounded-lg text-white cursor-pointer" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+            <h2 class="flex-1 text-center font-bold text-3xl">Mi perfil</h2>
+        </header>
+        
+        <div class="relative flex-1">
+            <img src="logo.png" class="watermark">
+            
+            <div class="bg-white p-4 rounded-2xl shadow-sm mb-6 border border-gray-100">
+                <p class="font-bold text-xs mb-2 text-gray-400 uppercase">Buscar mi cuenta</p>
+                <div class="flex gap-2">
+                    <input type="text" id="nombreUsuario" placeholder="Ingrese su nombre exacto" class="input-round flex-1">
+                    <button id="searchUsuario" class="bg-gray-800 text-white px-4 rounded-full text-xs font-bold">Buscar</button>
+                </div>
+                <div id="newPostResult" class="mt-2 text-[10px] font-bold text-center"></div>
+            </div>
+
+            <form id="updateInfoForm">
+                <p class="font-bold text-sm mt-6 mb-4 text-gray-700">Mis Datos Personales</p>
+                
+                <div class="border-b border-gray-300 py-2 mb-4">
+                    <label class="block text-[10px] text-gray-500 font-bold">Nombre Completo</label>
+                    <input type="text" id="userName" class="w-full bg-transparent outline-none text-sm" placeholder="..." required>
+                </div>
+
+                <div class="border-b border-gray-300 py-2 mb-4">
+                    <label class="block text-[10px] text-gray-500 font-bold">Correo Electrónico</label>
+                    <input type="email" id="userEmail" class="w-full bg-transparent outline-none text-sm" placeholder="..." required>
+                </div>
+
+                <p class="font-bold text-sm mb-4 mt-8 text-gray-700">Seguridad y Contacto</p>
+                
+                <div class="border-b border-gray-300 py-2 mb-4">
+                    <label class="block text-[10px] text-gray-500 font-bold">Contraseña</label>
+                    <input type="text" id="userPassword" class="w-full bg-transparent outline-none text-sm" placeholder="Nueva contraseña" required>
+                </div>
+
+                <div class="border-b border-gray-300 py-2 mb-8">
+                    <label class="block text-[10px] text-gray-500 font-bold">Número de Teléfono</label>
+                    <input type="tel" id="userPhone" class="w-full bg-transparent outline-none text-sm" placeholder="+52..." required>
+                </div>
+
+                <button type="submit" class="btn-cyan-rounded w-full shadow-lg">Actualizar mi información</button>
+            </form>
+
+            <div id="btnEliminarCuenta" class="flex items-center text-gray-400 font-bold mt-12 cursor-pointer hover:text-red-500 transition-colors">
+            <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-4 border border-gray-200">
+            <i class="fas fa-trash-alt text-xl"></i>
+            </div>
+            <span class="text-xl">Eliminar cuenta</span>
+        </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contacto" class="page p-10 items-center">
+    <div class="w-full max-w-md">
+        <header class="mb-10">
+            <i class="fas fa-chevron-left text-xl text-gray-400 cursor-pointer" onclick="toggleMenu()"></i>
+            <h2 class="text-3xl font-bold text-center -mt-6">Contáctenos</h2>
+        </header>
+        <div class="space-y-10 mt-16 px-4">
+            <div class="flex flex-col items-center">
+                <i class="fas fa-phone-alt text-2xl mb-2"></i>
+                <a href="tel:+526181500600" class="text-blue-500 underline font-semibold">+ 52 618 1500 600</a>
+            </div>
+            <div class="flex flex-col items-center">
+                <i class="far fa-envelope text-2xl mb-2"></i>
+                <span class="text-gray-700 font-medium">aguasproyecto9@gmail.com</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <i class="fas fa-map-marked-alt text-2xl mb-2"></i>
+                <span class="text-gray-700 font-medium text-center">Blas Corral #204 Sur, Zona Centro</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="reportes_form" class="page p-8 items-center">
+    <div class="w-full max-w-2xl">
+        <div class="flex items-center mb-10">
+            <div class="border border-purple-500 p-2 rounded-lg cursor-pointer" onclick="showPage('noticias')">
+                <i class="fas fa-chevron-left text-purple-500"></i>
+            </div>
+            <h2 class="flex-1 text-center font-bold text-3xl">Reportes</h2>
+        </div>
+        <div class="relative flex-1">
+            <img src="logo.png" class="watermark">
+            <p class="font-bold text-sm mb-6">Datos de reportes</p>
+            <label class="label-report">Nombre</label><input type="text" value="Aldo Michell Herrera Rivas" class="input-line">
+            <label class="label-report">Número de contrato</label><input type="text" value="131870" class="input-line">
+            <label class="label-report">Número de folio</label><input type="text" value="8315829" class="input-line">
+            <label class="label-report">Nombre de calle</label><input type="text" class="input-line">
+            <label class="label-report">Colonia o fraccionamiento</label><input type="text" class="input-line">
+            <button class="btn-cyan-rounded mt-10" onclick="openModal()">Continuar</button>
+        </div>
+    </div>
+    <nav class="nav-footer">
+        <div class="nav-item" onclick="showPage('noticias')"><i class="fas fa-newspaper"></i><span>Noticias</span></div>
+        <div class="nav-item active"><i class="fas fa-file-alt"></i><span>Reportes</span></div>
+        <div class="nav-item" onclick="showPage('ubicacion')"><i class="fas fa-map-marker-alt"></i><span>Ubicación</span></div>
+    </nav>
+</section>
+
+<section id="noticias" class="page">
+    <header class="p-4 flex items-center bg-white shadow-sm w-full sticky top-0 z-10">
+        <i class="fas fa-bars text-xl text-gray-600 cursor-pointer" onclick="toggleMenu()"></i>
+        <h1 class="flex-1 text-center font-bold text-xl">Noticias</h1>
+    </header>
+
+    <div class="p-6 overflow-y-auto pb-24">
+        <div class="bg-white p-6 rounded-3xl shadow-sm mb-8 border border-gray-100">
+            <h3 class="font-bold text-lg mb-4 text-gray-700">Agregar Noticia</h3>
+            <form id="newsForm" class="space-y-3">
+                <input type="text" id="titulo" placeholder="Título" class="input-round" required>
+                <input type="text" id="autor" placeholder="Autor" class="input-round" required>
+                <input type="text" id="fecha" placeholder="Fecha" class="input-round" required>
+                <textarea id="descripcion" placeholder="Descripción" class="input-round h-24 resize-none" required></textarea>
+                <button type="submit" class="btn-cyan-rounded w-full shadow-md mt-2">Guardar Noticia</button>
+            </form>
+        </div>
+
+        <hr class="mb-8 border-gray-100">
+
+        <div id="newsContainer" class="space-y-4">
+            </div>
+    </div>
+
+    <nav class="nav-footer">
+        <div class="nav-item active"><i class="fas fa-newspaper"></i><span>Noticias</span></div>
+        <div class="nav-item" onclick="showPage('reportes_form')"><i class="fas fa-file-alt"></i><span>Reportes</span></div>
+        <div class="nav-item" onclick="showPage('ubicacion')"><i class="fas fa-map-marker-alt"></i><span>Ubicación</span></div>
+    </nav>
+</section>
+
+<script>
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('sideMenu').classList.remove('open');
+        document.getElementById('menuOverlay').classList.remove('active');
+        window.scrollTo(0,0);
+    }
+    function toggleMenu() {
+        document.getElementById('sideMenu').classList.toggle('open');
+        document.getElementById('menuOverlay').classList.toggle('active');
+    }
+    function openModal() { document.getElementById('modalSuccess').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modalSuccess').style.display = 'none'; showPage('noticias'); }
+
+    window.addEventListener("load", function() {
+        const hash = window.location.hash.replace("#", "");
+        if (hash && hash !== "") {
+            showPage(hash);
+            history.replaceState(null, null, "index.html");
+        }
+    });
+</script>
+
+<script type="module" src="js/noticias.js"></script>
+<script type="module" src="js/regristro.js"></script>
+<script type="module" src="js/perfil.js"></script>
+
+
+</body>
+</html>

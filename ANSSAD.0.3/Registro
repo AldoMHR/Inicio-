@@ -1,0 +1,90 @@
+<style>
+body { 
+    font-family: 'Inter', sans-serif; 
+    background-color: #f6f6f4; 
+    margin: 0;
+    padding: 30px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.input-line {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #333;
+    padding: 6px 0;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+}
+
+.label-report {
+    font-size: 11px;
+    color: #333;
+    margin-top: 15px;
+    display: block;
+    font-weight: 600;
+}
+
+.btn-cyan-rounded {
+    background-color: #9cd3de;
+    color: #333;
+    padding: 12px 0;
+    width: 190px;
+    border-radius: 9999px;
+    font-weight: 600;
+    display: block;
+    margin: 40px auto 0;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-cyan-rounded:hover {
+    background-color: #7fc3d1;
+}
+
+.watermark {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.08;
+    width: 220px;
+    pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container relative">
+    <img src="logo.png" class="watermark">
+
+    <h2 class="text-3xl font-bold text-center mb-10">Reportes</h2>
+
+    <p class="font-bold text-sm mb-6">Datos de reportes</p>
+
+    <label class="label-report">Nombre</label>
+    <input type="text" value="Aldo Michell Herrera Rivas" class="input-line">
+
+    <label class="label-report">Número de contrato</label>
+    <input type="text" value="131870" class="input-line">
+
+    <label class="label-report">Número de folio</label>
+    <input type="text" value="8315829" class="input-line">
+
+    <label class="label-report">Nombre de calle</label>
+    <input type="text" class="input-line">
+
+    <label class="label-report">Colonia o fraccionamiento</label>
+    <input type="text" class="input-line">
+
+    <button class="btn-cyan-rounded">
+        Continuar
+    </button>
+</div>
+
+</body>
