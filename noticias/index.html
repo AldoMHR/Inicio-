@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Noticias</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Noticias</h1>
+
+  <form id="newsForm">
+    <input type="text" id="titulo" placeholder="Título" required>
+    <input type="text" id="autor" placeholder="Autor" required>
+    <input type="text" id="fecha" placeholder="Fecha" required>
+    <textarea id="descripcion" placeholder="Descripción" required></textarea>
+    <button type="submit">Guardar Noticia</button>
+  </form>
+
+  <hr>
+
+  <div id="newsContainer"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
