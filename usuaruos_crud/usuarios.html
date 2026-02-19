@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Administrar Usuarios</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="bg-gray-100">
+
+
+
+<!-- CONTENEDOR -->
+<div class="max-w-4xl mx-auto bg-white p-6 mt-10 rounded shadow">
+
+
+<h1 class="text-2xl font-bold mb-4">
+Administrar Usuarios
+</h1>
+
+
+
+<!-- ===== BUSCADOR ===== -->
+<div class="flex gap-2 mb-4">
+
+<input
+id="buscarUsuario"
+type="text"
+placeholder="Nombre usuario"
+class="border p-2 flex-1 rounded"
+/>
+
+
+<button
+onclick="buscarUsuarios()"
+class="bg-blue-500 text-white px-4 rounded"
+>
+Buscar
+</button>
+
+
+
+<button
+onclick="abrirFormulario()"
+class="bg-green-600 text-white px-4 rounded"
+>
+Crear Usuario
+</button>
+
+
+</div>
+
+
+
+<!-- ===== TABLA ===== -->
+<table class="w-full border">
+
+<thead class="bg-gray-200">
+
+<tr>
+
+<th class="p-2">Nombre</th>
+
+<th class="p-2">Correo</th>
+
+<th class="p-2">Telefono</th>
+
+<th class="p-2">Acciones</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="tablaUsuarios">
+
+</tbody>
+
+</table>
+
+
+</div>
+
+
+
+
+
+<!-- ===== FORMULARIO MODAL ===== -->
+<div
+id="modalFormulario"
+class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center"
+>
+
+
+<div class="bg-white p-6 rounded w-96">
+
+
+<h2 class="text-xl font-bold mb-4">
+Crear Usuario
+</h2>
+
+
+
+<input
+id="nombre"
+type="text"
+placeholder="Nombre"
+class="border p-2 w-full mb-2"
+/>
+
+
+<input
+id="correo"
+type="email"
+placeholder="Correo"
+class="border p-2 w-full mb-2"
+/>
+
+
+<input
+id="telefono"
+type="text"
+placeholder="Telefono"
+class="border p-2 w-full mb-2"
+/>
+
+
+<input
+id="password"
+type="password"
+placeholder="Contraseña"
+class="border p-2 w-full mb-4"
+/>
+
+
+
+<div class="flex justify-end gap-2">
+
+
+<button
+onclick="cerrarFormulario()"
+class="bg-gray-500 text-white px-4 py-2 rounded"
+>
+Cancelar
+</button>
+
+
+
+<button
+onclick="guardarUsuario()"
+class="bg-green-600 text-white px-4 py-2 rounded"
+>
+Guardar
+</button>
+
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
